@@ -1,9 +1,9 @@
 package com.stackroute.keepnote.dao;
 
 import java.util.List;
-
+import org.hibernate.query.Query;
 import org.hibernate.SessionFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import com.stackroute.keepnote.model.Note;
 
 /*
@@ -21,8 +21,12 @@ public class NoteDAOImpl implements NoteDAO {
 	/*
 	 * Autowiring should be implemented for the SessionFactory.
 	 */
-
+	
+	@Autowired
+	private SessionFactory sessionFactory;
+	
 	public NoteDAOImpl(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 
 	}
 
@@ -31,7 +35,8 @@ public class NoteDAOImpl implements NoteDAO {
 	 */
 
 	public boolean saveNote(Note note) {
-		return false;
+		final int id = (int) this.sessionFactory.getCurrentSession().save(note);
+		return id > 0 ? true : false;
 
 	}
 
@@ -40,7 +45,10 @@ public class NoteDAOImpl implements NoteDAO {
 	 */
 
 	public boolean deleteNote(int noteId) {
-		return false;
+		final Note note = this.getNoteById(noteId);
+		this.sessionFactory.getCurrentSession().delete(note);
+		return note != null ? true : false;
+
 
 	}
 
@@ -49,22 +57,23 @@ public class NoteDAOImpl implements NoteDAO {
 	 * order(showing latest note first)
 	 */
 	public List<Note> getAllNotes() {
-		return null;
-
+		final Query query = this.sessionFactory.getCurrentSession().createQuery("from Note n order by n.createdAt desc");
+		return query.list();
 	}
 
 	/*
 	 * retrieve specific note from the database(note) table
 	 */
 	public Note getNoteById(int noteId) {
-		return null;
+		return this.sessionFactory.getCurrentSession().find(Note.class, noteId);
 
 	}
 
 	/* Update existing note */
 
 	public boolean UpdateNote(Note note) {
-		return false;
+		this.sessionFactory.getCurrentSession().saveOrUpdate(note);
+		return true;
 
 	}
 
