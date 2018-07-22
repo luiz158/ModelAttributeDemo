@@ -1,9 +1,16 @@
 package com.stackroute.keepnote.dao;
 
 import java.util.List;
-import org.hibernate.query.Query;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.stackroute.keepnote.model.Note;
 
 /*
@@ -15,19 +22,25 @@ import com.stackroute.keepnote.model.Note;
  * 					transaction. The database transaction happens inside the scope of a persistence 
  * 					context.  
  * */
-
+@Repository
+@Transactional
 public class NoteDAOImpl implements NoteDAO {
 
 	/*
 	 * Autowiring should be implemented for the SessionFactory.
 	 */
 	
-	@Autowired
-	private SessionFactory sessionFactory;
-	
+	private final SessionFactory sessionFactory;
+	private final CriteriaBuilder criteriaBuilder;
+	private final CriteriaQuery<Note> noteCriteriaQuery;
+	private final Root<Note> noteRoot;
+
 	public NoteDAOImpl(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-
+		this.criteriaBuilder = this.sessionFactory.getCriteriaBuilder();
+		this.noteCriteriaQuery = this.criteriaBuilder.createQuery(Note.class);
+		this.noteRoot = noteCriteriaQuery.from(Note.class);
+		this.noteCriteriaQuery.orderBy(this.criteriaBuilder.desc(noteRoot.get("createdAt")));
 	}
 
 	/*
@@ -35,8 +48,7 @@ public class NoteDAOImpl implements NoteDAO {
 	 */
 
 	public boolean saveNote(Note note) {
-		final int id = (int) this.sessionFactory.getCurrentSession().save(note);
-		return id > 0 ? true : false;
+		return getSession().save(note) != null ? true: false;
 
 	}
 
@@ -46,9 +58,8 @@ public class NoteDAOImpl implements NoteDAO {
 
 	public boolean deleteNote(int noteId) {
 		final Note note = this.getNoteById(noteId);
-		this.sessionFactory.getCurrentSession().delete(note);
-		return note != null ? true : false;
-
+		getSession().delete(note);
+		return true;
 
 	}
 
@@ -57,24 +68,27 @@ public class NoteDAOImpl implements NoteDAO {
 	 * order(showing latest note first)
 	 */
 	public List<Note> getAllNotes() {
-		final Query query = this.sessionFactory.getCurrentSession().createQuery("from Note n order by n.createdAt desc");
-		return query.list();
+		return getSession().createQuery(this.noteCriteriaQuery.select(noteRoot)).list();
+
 	}
 
 	/*
 	 * retrieve specific note from the database(note) table
 	 */
-	public Note getNoteById(int noteId) {
-		return this.sessionFactory.getCurrentSession().find(Note.class, noteId);
+	public Note getNoteById(int noteId) {		
+		return getSession().find(Note.class, noteId);
 
 	}
 
 	/* Update existing note */
 
 	public boolean UpdateNote(Note note) {
-		this.sessionFactory.getCurrentSession().saveOrUpdate(note);
-		return true;
+		return getSession().merge(note) != null ? true : false;
 
+	}
+	
+	protected Session getSession() {
+		return this.sessionFactory.getCurrentSession();
 	}
 
 }

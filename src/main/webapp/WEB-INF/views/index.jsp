@@ -1,101 +1,120 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" isELIgnored="false"%>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<!DOCTYPE html>
+<html lang="en">
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Keep-Board</title>
-<style>
-table {
-	border-collapse: collapse;
-	align: center;
-}
-
-table, td, th {
-	border: 1px solid black;
-	align: center;
-	padding: 1em;
-}
-
-div {
-	padding: 1em;
-	align: center;
-}
-
-label {
-	padding: 1em;
-	width: 2em;
-}
-</style>
-<script>
-	function submitform() {
-		document.getElementById('form').action = "add";
-		document.getElementById('form').method = "POST";
-		document.getElementById().submit();
-	}
-</script>
 </head>
-</head>
+
 <body>
-	<center>
-		<!-- Create a form which will have text boxes for Note ID, title, content and status along with a Send 
-		 button. Handle errors like empty fields -->
-		<form:form id="form" name="form" action="" method="POST"
-			modelAttribute="note">
-			<div>
-				<label>Enter Note Title</label> <input type="text" id="noteTitle"
-					name="noteTitle" />
-				<form:errors path="noteTitle" cssClass="error" />
-			</div>
-			<div>
-				<label>Enter Note Content</label>
-				<textarea id="noteContent" name="noteContent"></textarea>
-				<form:errors path="noteContent" cssClass="error" />
-			</div>
-			<div>
-				<label>Enter Note Status</label> <select id="noteStatus"
-					name="noteStatus">
-					<option value="Started">Started</option>
-					<option value="Not Started">Not Started</option>
-					<option value="Completed">Completed</option>
-				</select>
-				<form:errors path="noteStatus" cssClass="error" />
-			</div>
-			<div>
-				<input type="submit" onclick="submitform();" value="Submit" />
-			</div>
-
-		</form:form>
-	</center>
-	<!-- display all existing notes in a tabular structure with Id, Title,Content,Status, Created Date and Action -->
 	<div>
-		<table>
-			<tr>
-				<th>Note Id</th>
-				<th>Note Title</th>
-				<th>Note Content</th>
-				<th>Note Status</th>
-				<th>Created At</th>
-				<th>Action</th>
-			</tr>
-			<c:if test="${not empty noteList}">
-				<c:forEach items="${noteList}" var="note">
+		<c:if test="${not empty errorMessage}">${errorMessage}</c:if><br/>
+		<c:if test="${not empty errorMessage1}">${errorMessage1}</c:if><br/>
+	</div>
+	<!-- Create a form which will have text boxes for Note title, content and status along with a Add 
+		 button. Handle errors like empty fields.  (Use dropdown-list for NoteStatus) -->
+		<c:choose>
+		<c:when test="${editNote eq null}">
+			<h1>Add mode</h1>
+			<form:form action="add" method="post" modelAttribute="note">
+			<!-- <form:errors path="*" /> -->
+				<table>
 					<tr>
-						<td>${note.getNoteId()}</td>
-						<td>${note.getNoteTitle()}</td>
-						<td>${note.getNoteContent()}</td>
-						<td>${note.getNoteStatus()}</td>
-						<td>${note.getCreatedAt()}</td>
-						<td><a href="delete?noteId=${note.getNoteId()}">Delete</a>
+						<td>Title :</td>
+						<td><form:input path="noteTitle"/></td>
+						<!-- <td><form:errors path="noteTitle"/></td> --> 
+					</tr>
+					<tr>
+						<td>Content :</td>
+						<td><form:textarea rows="2" cols="15" path="noteContent"></form:textarea></td>
+						<!-- <td><form:errors path="noteContent"/></td> --> 
+					</tr>
+					<tr>
+						<td>Status :</td>
+						<td>
+							<form:select path="noteStatus">
+								<form:option value="-">select from options</form:option>
+							  <form:option value="started">Started</form:option>
+							  <form:option value="inprogress">In Progress</form:option>
+							  <form:option value="completed">Completed</form:option>
+							</form:select>
 						</td>
 					</tr>
-				</c:forEach>
-			</c:if>
-		</table>
-	</div>
+					<tr>						
+						<td><input type="submit" value="Add"></td>
+						<td><input type="reset" value="Clear" /></td>
+					</tr>					
+				</table>
+			</form:form>
+		</c:when>
+		<c:otherwise>
+			<h1>Edit mode</h1>
+			<form:form action="update" method="post" modelAttribute="editNote">
+			<!-- <form:errors path="*" /> -->
+				<table>
+					<form:input type="hidden" path="noteId" value="${editNote.noteId}"/>
+					<tr>
+						<td>Title :</td>
+						<td><form:input path="noteTitle" value="${editNote.noteTitle}"/></td>
+						<!-- <td><form:errors path="noteTitle"/></td> --> 
+					</tr>
+					<tr>
+						<td>Content :</td>
+						<td><form:textarea rows="2" cols="15" path="noteContent" value="${editNote.noteContent}"></form:textarea></td>
+						<!-- <td><form:errors path="noteContent"/></td> --> 
+					</tr>
+					<tr>
+						<td>Status :</td>
+						<td>
+							<form:select path="noteStatus">
+							  <form:option value="-" selected="${editNote.noteStatus eq \"-\" ? \"selected\" : \"\" }">select from options</form:option>
+							  <form:option value="started" selected="${editNote.noteStatus eq \"started\" ? \"selected\" : \"\" }">Started</form:option>
+							  <form:option value="inprogress" selected="${editNote.noteStatus eq \"inprogress\" ? \"selected\" : \"\" }">In Progress</form:option>
+							  <form:option value="completed" selected="${editNote.noteStatus eq \"completed\" ? \"selected\" : \"\" }">Completed</form:option>
+							</form:select>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input type="submit" value="update"></td>
+					</tr>					
+				</table>
+			</form:form>
+		</c:otherwise>
+	</c:choose>
+
+	<!-- display all existing notes in a tabular structure with Title,Content,Status, Created Date and Action -->
+	<table border="1">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Status</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="note" items="${notes}">
+                <c:url value="delete" var="deleteUrl">
+				  <c:param name="noteId" value="${note.noteId}" />
+				</c:url>
+				<c:url value="update" var="updateUrl">
+				  <c:param name="noteId" value="${note.noteId}" />
+				</c:url>
+                <tr>
+                    <td><c:out value="${note.noteTitle}" /></td>
+                    <td><c:out value="${note.noteContent}" /></td>
+                    <td><c:out value="${note.noteStatus}" /></td>
+                    <td><c:out value="${note.createdAt}" /></td>
+                    <td><a href="${updateUrl}">Update Note</a> / <a href="${deleteUrl}">Delete Note</a></td>
+                </tr>
+                 </c:forEach>
+            </tbody>
+        </table>	
 </body>
+
 </html>
