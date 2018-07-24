@@ -1,5 +1,6 @@
 package com.stackroute.keepnote.controller;
 
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.stackroute.keepnote.model.Note;
 
 @Controller
-public class NoteController {
-
+public class NoteController2 {
+/*
 	Note note = new Note();
 	
-	public NoteController() {
+	public NoteController2() {
 		
 	}
 
@@ -42,7 +43,15 @@ public class NoteController {
 			model.addAttribute("errorMessage", "Note title cannot be empty");
 			error = true;
 		}
+		if (note.getNoteContent().isEmpty()) {
+			model.addAttribute("errorMessage1", "Note content cannot be empty");
+			error = true;
+		}
 		
+		if (note.getNoteStatus().isEmpty()) {
+			model.addAttribute("errorMessage2", "Note Status cannot be empty");
+			error = true;
+		}
 		
 		System.out.println(note.getNoteTitle());
 		System.out.println(error);
@@ -53,19 +62,8 @@ public class NoteController {
 		
 	}
 
-	@ModelAttribute
-	public Note getNote() {
-		note.setNoteTitle("testtitle1");
-		note.setNoteStatus("teststatus1");
-		note.setNoteContent("testcontent1");
 		
-		System.out.println(note.getNoteTitle());
-		return note;
-	}
 	
-	
-	
-	
-	
+*/	
 	
 }
