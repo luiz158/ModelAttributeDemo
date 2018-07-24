@@ -13,20 +13,20 @@
 	<!-- Create a form which will have text boxes for Note title, content and status along with a Add 
 		 button. Handle errors like empty fields.  (Use dropdown-list for NoteStatus) -->
 	<h1>Add Note</h1>
-	<form:form action="add" method="post" modelAttribute="note">
+	<form:form action="add" method="post" modelAttribute="vendor">
 		<!-- <form:errors path="*" /> -->
 		<table>
 			<tr>
 				<td>Title :</td>
-				<td><form:input name="noteTitle" path="noteTitle" /></td>
+				<td><form:input path="vendorCode" /></td>
 			</tr>
 			<tr>
 				<td>Content :</td>
-				<td><form:input path="noteContent" /></td>
+				<td><form:input path="vendorName" /></td>
 			</tr>
 			<tr>
 				<td>Status :</td>
-				<td><form:input path="noteStatus" /></td>
+				<td><form:input path="vendorCity" /></td>
 			</tr>
 			<tr>
 				<td><input type="submit" value="Add"></td>
@@ -45,9 +45,9 @@
 		</thead>
 		<tbody>
 				<tr>
-					<td>${note.noteTitle}</td>
-					<td>${note.noteContent}</td>
-					<td>"${note.noteStatus}</td>
+					<td>${vendor.vendorCode}</td>
+					<td>${vendor.vendorName}</td>
+					<td>${vendor.vendorCity}</td>
 
 				</tr>
 

@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>Com.Stackroute</groupId>
-	<artifactId>KeepNote-Step2-Boilerplate</artifactId>
+	<groupId>com.Stackroute</groupId>
+	<artifactId>ModelAttributeDemo</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>KeepNote-Step2-Boilerplate Maven Webapp</name>
+	<name>ModelAttributeDemo Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
@@ -104,12 +104,12 @@
 					<version>2.4</version>
 					<configuration>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
-						<warName>KeepNote-Step2-Boilerplate</warName>
+						<warName>ModelAttributeDemo</warName>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<finalName>KeepNote-Step2-Boilerplate</finalName>
+		<finalName>ModelAttributeDemo</finalName>
 	</build>
 </project>
